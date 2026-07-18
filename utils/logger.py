@@ -191,6 +191,33 @@ def setup_gui_logging():
     logger.addHandler(gui_handler)
 
 
+import threading
+gui_input_queue = queue.Queue()
+gui_output_map = {}
+request_counter = 0
+request_counter_lock = threading.Lock()
+
+def get_next_request_id():
+    global request_counter
+    with request_counter_lock:
+        request_counter += 1
+        return request_counter
+
+def safe_ask_string(title, prompt):
+    req_id = get_next_request_id()
+    event = threading.Event()
+    gui_input_queue.put((req_id, "askstring", (title, prompt), event))
+    event.wait()
+    return gui_output_map.pop(req_id, None)
+
+def safe_show_info(title, message):
+    req_id = get_next_request_id()
+    event = threading.Event()
+    gui_input_queue.put((req_id, "showinfo", (title, message), event))
+    event.wait()
+    return
+
+
 class PluginLogger:
 
     def __init__(self, pluginName):

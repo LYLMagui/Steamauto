@@ -16,7 +16,7 @@ from steampy.client import STEAM_USER_AGENT, SteamClient
 from steampy.exceptions import ApiException
 from steampy.models import GameOptions
 from utils import static
-from utils.logger import PluginLogger, handle_caught_exception
+from utils.logger import PluginLogger, handle_caught_exception, safe_ask_string
 from utils.notifier import send_notification
 from utils.static import SESSION_FOLDER, STEAM_ACCOUNT_INFO_FILE_PATH, CONFIG_FILE_PATH
 from utils.tools import accelerator, get_encoding, pause
@@ -412,8 +412,7 @@ def login_to_steam(config: dict):
         func_2fa = None
         if getattr(static, "is_gui_mode", False):
             def gui_2fa_input():
-                from tkinter import simpledialog
-                return simpledialog.askstring("Steam 2FA 验证码", "请输入您的 Steam 手机令牌 2FA 验证码：")
+                return safe_ask_string("Steam 2FA 验证码", "请输入您的 Steam 手机令牌 2FA 验证码：")
             func_2fa = gui_2fa_input
         auth_info = client.login(username, password, steam_account_info, func_2fa_input=func_2fa)
         if client.is_session_alive():

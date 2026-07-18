@@ -1,7 +1,7 @@
 import os
 import sys
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, simpledialog
 import json5
 import threading
 import queue
@@ -9,7 +9,7 @@ import logging
 
 import utils.static as static
 from utils.static import CONFIG_FILE_PATH, STEAM_ACCOUNT_INFO_FILE_PATH, DEFAULT_CONFIG_JSON, DEFAULT_STEAM_ACCOUNT_JSON
-from utils.logger import gui_log_queue, setup_gui_logging, logger
+from utils.logger import gui_log_queue, setup_gui_logging, logger, gui_input_queue, gui_output_map
 
 # UI Theme Palette
 BG_MAIN = "#121214"
@@ -51,6 +51,7 @@ class SteamautoGUI:
         static.no_pause = True  # Prevent terminal inputs
         
         self.poll_logs()
+        self.poll_input_requests()
         
     def load_json_config(self, file_path, default_content):
         if not os.path.exists(file_path):
@@ -669,6 +670,23 @@ class SteamautoGUI:
         self.log_text.tag_add(lvl, start_idx, end_idx)
         self.log_text.config(state=tk.DISABLED)
         self.log_text.see(tk.END)
+
+    def poll_input_requests(self):
+        try:
+            while True:
+                req_id, req_type, args, event = gui_input_queue.get_nowait()
+                if req_type == "askstring":
+                    title, prompt = args
+                    res = simpledialog.askstring(title, prompt, parent=self.root)
+                    gui_output_map[req_id] = res
+                elif req_type == "showinfo":
+                    title, message = args
+                    messagebox.showinfo(title, message, parent=self.root)
+                    gui_output_map[req_id] = None
+                event.set()
+        except queue.Empty:
+            pass
+        self.root.after(100, self.poll_input_requests)
 
     # ================= BACKGROUND WORKER THREAD =================
 

@@ -4,7 +4,7 @@ import time
 from colorama import Fore, Style
 
 import uuyoupinapi
-from utils.logger import PluginLogger, handle_caught_exception
+from utils.logger import PluginLogger, handle_caught_exception, safe_ask_string, safe_show_info
 from utils.static import UU_TOKEN_FILE_PATH
 from utils.tools import get_encoding
 
@@ -53,8 +53,7 @@ def get_token_automatically(proxies=None):
     headers = uuyoupinapi.generate_headers(device_info, device_info)
 
     if getattr(static, "is_gui_mode", False):
-        from tkinter import simpledialog
-        phone_number = simpledialog.askstring("悠悠有品登录", "请输入手机号(+86)：")
+        phone_number = safe_ask_string("悠悠有品登录", "请输入手机号(+86)：")
     else:
         phone_number = input(f"{Style.BRIGHT + Fore.RED}请输入手机号(+86)(如果此时有其它插件输出请忽略！输入完按回车即可！)：{Style.RESET_ALL}")
         
@@ -72,8 +71,7 @@ def get_token_automatically(proxies=None):
     if "成功" in result.get("Msg", ""):
         logger.info("发送验证码结果：" + result["Msg"])
         if getattr(static, "is_gui_mode", False):
-            from tkinter import simpledialog
-            sms_code = simpledialog.askstring("悠悠有品验证码", "请输入短信验证码：")
+            sms_code = safe_ask_string("悠悠有品验证码", "请输入短信验证码：")
         else:
             sms_code = input(f"{Style.BRIGHT + Fore.RED}请输入验证码(如果此时有其它插件输出请忽略！输入完按回车即可！)：{Style.RESET_ALL}")
         
@@ -88,8 +86,7 @@ def get_token_automatically(proxies=None):
         if result["Code"] == 0:
             logger.info("请求结果：" + result["Msg"])
             if getattr(static, "is_gui_mode", False):
-                from tkinter import messagebox
-                messagebox.showinfo(
+                safe_show_info(
                     "手动发送短信验证", 
                     f"请编辑发送短信:\n{result['Data']['SmsUpContent']}\n\n到号码:\n{result['Data']['SmsUpNumber']}\n\n发送完成后点击确定！"
                 )
