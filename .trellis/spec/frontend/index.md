@@ -4,3 +4,5 @@ This directory contains executable contracts and coding conventions for the fron
 
 ## Guidelines
 - [Styling Guidelines](./styling-guidelines.md)
+- [Tkinter GUI Guidelines](./tkinter-guidelines.md)
+
