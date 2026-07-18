@@ -277,6 +277,14 @@ When a user request matches one of these intents inside an active task, route fi
 - Planning or unclear requirements -> `trellis-brainstorm`.
 - `in_progress` implementation/check -> dispatch `trellis-implement` / `trellis-check`.
 - Repeated debugging -> `trellis-break-loop`; spec updates -> `trellis-update-spec`.
+- UI/UX Design & Frontend generation -> `ui-ux-pro-max`, `ui-design-brain`, `web-design-engineer`, or `design-taste-frontend`.
+- UI Auditing & Improvement -> `impeccable` or `web-design-guidelines`.
+- Browser Testing & Debugging -> `agent-browser-cli` or `chrome-devtools`.
+- Tailwind Design Systems -> `tailwind-design-system`.
+- Icon Search/Retrieval -> `better-icons`.
+- Stress-testing a plan -> `grill-me`.
+- Writing or improving skills -> `skill-development`.
+- Text refinement -> `humanizer-zh`.
 
 [/Claude Code, Cursor, OpenCode, codex-sub-agent, Kiro, Gemini, Qoder, CodeBuddy, Copilot, Droid, Pi, Oh My Pi, ZCode, Reasonix, Trae]
 
@@ -285,6 +293,14 @@ When a user request matches one of these intents inside an active task, route fi
 - Planning or unclear requirements -> `trellis-brainstorm`.
 - Before editing -> `trellis-before-dev`; after editing -> `trellis-check`.
 - Repeated debugging -> `trellis-break-loop`; spec updates -> `trellis-update-spec`.
+- UI/UX Design & Frontend generation -> `ui-ux-pro-max`, `ui-design-brain`, `web-design-engineer`, or `design-taste-frontend`.
+- UI Auditing & Improvement -> `impeccable` or `web-design-guidelines`.
+- Browser Testing & Debugging -> `agent-browser-cli` or `chrome-devtools`.
+- Tailwind Design Systems -> `tailwind-design-system`.
+- Icon Search/Retrieval -> `better-icons`.
+- Stress-testing a plan -> `grill-me`.
+- Writing or improving skills -> `skill-development`.
+- Text refinement -> `humanizer-zh`.
 
 [/codex-inline, Kilo, Antigravity, Devin]
 
