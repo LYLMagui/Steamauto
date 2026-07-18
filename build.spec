@@ -2,7 +2,7 @@
 import os
 from PyInstaller.utils.hooks import collect_all
 
-os_name = os.environ.get('MATRIX_OS', 'unknown')
+os_name = os.environ.get('MATRIX_OS', 'windows')
 upx_enabled = 'windows' in os_name
 upx_directory = 'C:\\upx' if upx_enabled else None
 

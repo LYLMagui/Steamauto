@@ -409,7 +409,13 @@ def login_to_steam(config: dict):
         if config["use_proxies"] and config["steam_local_accelerate"]:
             logger.warning("检测到你已经同时开启内置加速和代理功能！正常情况下不推荐通过这种方式使用软件")
         logger.info("正在登录...")
-        auth_info = client.login(username, password, steam_account_info)
+        func_2fa = None
+        if getattr(static, "is_gui_mode", False):
+            def gui_2fa_input():
+                from tkinter import simpledialog
+                return simpledialog.askstring("Steam 2FA 验证码", "请输入您的 Steam 手机令牌 2FA 验证码：")
+            func_2fa = gui_2fa_input
+        auth_info = client.login(username, password, steam_account_info, func_2fa_input=func_2fa)
         if client.is_session_alive():
             logger.info("账密登录成功")
             _bind_client_credentials(client, username, password)

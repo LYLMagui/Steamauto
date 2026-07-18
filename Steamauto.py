@@ -341,5 +341,19 @@ if __name__ == "__main__":
     signal.signal(signal.SIGINT, exit_app)
     if not os.path.exists(SESSION_FOLDER):
         os.mkdir(SESSION_FOLDER)
-    exit_code.set(main())  # type: ignore
-    exit_app(None, None)
+        
+    is_cli = len(sys.argv) > 1 and sys.argv[1] == "--cli"
+    
+    if is_cli:
+        static.is_gui_mode = False
+        exit_code.set(main())  # type: ignore
+        exit_app(None, None)
+    else:
+        static.is_gui_mode = True
+        # Pre-initialize configuration folders and default templates
+        init_files_and_params()
+        # Launch modern Tkinter UI client
+        from utils.gui import SteamautoGUI
+        gui_app = SteamautoGUI(main)
+        gui_app.run()
+

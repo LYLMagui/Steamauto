@@ -48,10 +48,20 @@ def get_token_automatically(proxies=None):
     引导用户输入手机号，发送验证码，输入验证码，自动登录，并且返回token
     :return: token
     """
+    import utils.static as static
     device_info = uuyoupinapi.generate_random_string(10)
     headers = uuyoupinapi.generate_headers(device_info, device_info)
 
-    phone_number = input(f"{Style.BRIGHT + Fore.RED}请输入手机号(+86)(如果此时有其它插件输出请忽略！输入完按回车即可！)：{Style.RESET_ALL}")
+    if getattr(static, "is_gui_mode", False):
+        from tkinter import simpledialog
+        phone_number = simpledialog.askstring("悠悠有品登录", "请输入手机号(+86)：")
+    else:
+        phone_number = input(f"{Style.BRIGHT + Fore.RED}请输入手机号(+86)(如果此时有其它插件输出请忽略！输入完按回车即可！)：{Style.RESET_ALL}")
+        
+    if not phone_number:
+        logger.error("手机号为空，取消悠悠有品登录。")
+        return False
+        
     token_id = device_info
     logger.debug("随机生成的token_id：" + token_id)
     uk = uuyoupinapi.UUAccount.get_uu_uk()
@@ -61,17 +71,33 @@ def get_token_automatically(proxies=None):
     response = {}
     if "成功" in result.get("Msg", ""):
         logger.info("发送验证码结果：" + result["Msg"])
-        sms_code = input(f"{Style.BRIGHT + Fore.RED}请输入验证码(如果此时有其它插件输出请忽略！输入完按回车即可！)：{Style.RESET_ALL}")
+        if getattr(static, "is_gui_mode", False):
+            from tkinter import simpledialog
+            sms_code = simpledialog.askstring("悠悠有品验证码", "请输入短信验证码：")
+        else:
+            sms_code = input(f"{Style.BRIGHT + Fore.RED}请输入验证码(如果此时有其它插件输出请忽略！输入完按回车即可！)：{Style.RESET_ALL}")
+        
+        if not sms_code:
+            logger.error("验证码为空，取消悠悠有品登录。")
+            return False
+            
         response = uuyoupinapi.UUAccount.sms_sign_in(phone_number, sms_code, token_id, headers=headers, proxies=proxies)
     else:
         logger.info("该手机号需要手动发送短信进行验证，正在获取相关信息...")
         result = uuyoupinapi.UUAccount.get_smsUpSignInConfig(headers, proxies).json()
         if result["Code"] == 0:
             logger.info("请求结果：" + result["Msg"])
-            logger.info(
-                f"{Style.BRIGHT + Fore.RED}请编辑发送短信 {Fore.YELLOW + result['Data']['SmsUpContent']} {Fore.RED}到号码 {Fore.YELLOW + result['Data']['SmsUpNumber']} {Fore.RED}！(如果此时有其它插件输出请忽略)发送完成后请按下回车{Style.RESET_ALL}",
-            )
-            input()
+            if getattr(static, "is_gui_mode", False):
+                from tkinter import messagebox
+                messagebox.showinfo(
+                    "手动发送短信验证", 
+                    f"请编辑发送短信:\n{result['Data']['SmsUpContent']}\n\n到号码:\n{result['Data']['SmsUpNumber']}\n\n发送完成后点击确定！"
+                )
+            else:
+                logger.info(
+                    f"{Style.BRIGHT + Fore.RED}请编辑发送短信 {Fore.YELLOW + result['Data']['SmsUpContent']} {Fore.RED}到号码 {Fore.YELLOW + result['Data']['SmsUpNumber']} {Fore.RED}！(如果此时有其它插件输出请忽略)发送完成后请按下回车{Style.RESET_ALL}",
+                )
+                input()
             logger.info("请稍候...")
             time.sleep(3)  # 防止短信发送延迟
             response = uuyoupinapi.UUAccount.sms_sign_in(phone_number, "", token_id, headers=headers, proxies=proxies)

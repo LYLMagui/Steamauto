@@ -173,7 +173,26 @@ def handle_caught_exception(e: Exception, prefix: str = "", known: bool = False)
             plogger.error(e, exc_info=True)
 
 
+import queue
+gui_log_queue = queue.Queue()
+
+class GuiLogHandler(logging.Handler):
+    def emit(self, record):
+        try:
+            msg = self.format(record)
+            gui_log_queue.put((record.levelname, msg))
+        except Exception:
+            self.handleError(record)
+
+def setup_gui_logging():
+    gui_handler = GuiLogHandler()
+    gui_handler.setFormatter(log_formatter)
+    gui_handler.setLevel(logging.INFO)
+    logger.addHandler(gui_handler)
+
+
 class PluginLogger:
+
     def __init__(self, pluginName):
         if "[" and "]" not in pluginName:
             self.pluginName = f"[{pluginName}]"
